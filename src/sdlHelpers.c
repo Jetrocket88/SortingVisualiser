@@ -9,14 +9,6 @@
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_timer.h"
 
-void regenerateBarsFromArray(int* arr, int n, SDL_FRect* bars) {
-    for (int i = 0; i < n; i++) {
-        int barHeight = arr[i];
-        bars[i].y = HEIGHT - barHeight;
-        bars[i].h = barHeight;
-    }
-}
-
 void renderFRect(SDL_Renderer *renderer, SDL_FRect rect, SDL_Color color) {
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
     SDL_RenderFillRect(renderer, &rect);
@@ -69,7 +61,7 @@ void makeItGreen(SDL_FRect* bars, int n, SDL_Renderer *prenderer) {
         if (i >= n) {
             break;
         }
-        SDL_Delay(8);
+        SDL_Delay(1);
     }
     SDL_Delay(30);
     drawBarsColourIndex(bars, n, GREEN, prenderer, n);
@@ -81,3 +73,18 @@ void printArray(int *arr, size_t n) {
         printf("%d\n", arr[i]);
     }
 }
+
+void swapBars(SDL_FRect* bar1, SDL_FRect* bar2) {
+    float y = bar1->y;
+    float h = bar1->h;
+
+    bar1->y = bar2->y;
+    bar1->h = bar2->h;
+
+    bar2->y = y;
+    bar2->h = h;
+}
+
+
+
+

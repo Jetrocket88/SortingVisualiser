@@ -6,6 +6,7 @@
 
 #include "../headers/sdlhelpers.h"
 #include "../headers/constants.h"
+#include "../headers/algorithms.h"
 
 #include <SDL3/SDL.h>
 #include "SDL3/SDL_init.h"
@@ -14,7 +15,7 @@
 #include "SDL3/SDL_timer.h"
 #include "SDL3/SDL_video.h"
 
-void visualBubbleSort(int* arr, SDL_Renderer* prenderer, int n, SDL_FRect* bars, bool* running, size_t skipFrames) {
+void visualBubbleSort(SDL_Renderer* prenderer, SDL_FRect *bars, size_t n, bool *running, size_t skipFrames) {
     size_t frameCount = 0;
 
     drawAllBars(prenderer, n, bars, WHITE);
@@ -26,61 +27,99 @@ void visualBubbleSort(int* arr, SDL_Renderer* prenderer, int n, SDL_FRect* bars,
         swapped = false;
         for (int inner = 0; inner < outer; inner++) {
 
-            if (arr[inner] > arr[inner + 1]) {
-                int temp = arr[inner];
-                arr[inner] = arr[inner + 1];
-                arr[inner + 1] = temp;
+            if (bars[inner].h > bars[inner + 1].h) {
+                swapBars(&bars[inner], &bars[inner + 1]);
                 swapped = true;
             }
 
             frameCount++;
             if (frameCount >= skipFrames) {
                 frameCount = 0;
-                regenerateBarsFromArray(arr, n, bars);
                 drawAllBars(prenderer, n, bars, WHITE);
             } 
         }
         outer--;
     }
     SDL_Delay(20);
-    regenerateBarsFromArray(arr, n, bars);
     drawAllBars(prenderer, n, bars, WHITE);
     makeItGreen(bars, n, prenderer);
 }
 
-void visualInsertionSort(int* arr, SDL_Renderer* prenderer, uint32_t n, SDL_FRect* bars, bool* running, size_t skipFrames) {
+
+void visualInsertionSort(SDL_Renderer* prenderer, size_t n, SDL_FRect* bars, bool* running, size_t skipFrames) {
     size_t frameCount = 0;
     drawAllBars(prenderer, n, bars, WHITE);
     delay(1500, running);  //just to see the unsorted array before sorting starts
     
-    for(size_t i = 1; i < n; i++) {
+    for (size_t i = 1; i < n; i++) {
 
-        int value = arr[i];
+        float valueH = bars[i].h;
+        float valueY = bars[i].y;
+
         size_t position = i;
 
-        while(position > 0 && arr[position - 1] > value) {
-            arr[position] = arr[position - 1];
+        while(position > 0 && bars[position - 1].h > valueH) {
+            swapBars(&bars[position], &bars[position - 1]);
             position--;
         }
-        arr[position] = value;
+        bars[position].h = valueH;
+        bars[position].y = valueY;
 
         frameCount++;
         if (frameCount >= skipFrames) {
             frameCount = 0;
-            regenerateBarsFromArray(arr, n, bars);
             drawAllBars(prenderer, n, bars, WHITE);
         } 
-        SDL_Delay(20);
+        SDL_Delay(3);
     }
+
     SDL_Delay(20);
-    regenerateBarsFromArray(arr, n, bars);
     drawAllBars(prenderer, n, bars, WHITE);
     makeItGreen(bars, n, prenderer);
 }
 
+int visualPartition(SDL_Renderer* prenderer, size_t n, SDL_FRect* bars, size_t skipFrames, int low, int high) {
+    size_t frameCount = 0;
+
+    SDL_FRect pivot = bars[high];
+    int i = low - 1;
+    for (int j = low; j <= high; j++) {
+        if (bars[j].h < pivot.h) {
+            i++;
+            swapBars(&bars[j], &bars[i]);
+
+            if (frameCount >= skipFrames) {
+                frameCount = 0;
+                drawAllBars(prenderer, n, bars, WHITE);
+            }
+            frameCount++;
+        }
+    }
+    SDL_Delay(10);
+    swapBars(&bars[i + 1], &bars[high]);
+    drawAllBars(prenderer, n, bars, WHITE);
+    return i + 1;
+}
+
+void visualQuickSort(SDL_Renderer* prenderer, size_t n, SDL_FRect* bars, bool *running, size_t skipFrames, int low, int high) {
+    if(low == 0 && high == n) {
+        drawAllBars(prenderer, n, bars, WHITE);
+        delay(2000, running);  //just to see the unsorted array before sorting starts
+    }
+
+    if (low < high) {
+        int pi = visualPartition(prenderer, n, bars, skipFrames, low, high);
+        visualQuickSort(prenderer, n, bars, running, skipFrames, low, pi - 1);
+        visualQuickSort(prenderer, n, bars, running, skipFrames, pi + 1, high);
+    } 
+    drawAllBars(prenderer, n, bars, WHITE);
+}
+
+
 int main(int argc, char **argv) {
 
-    int barWidth, skipFrames = 0;
+    int barWidth = 0;
+    int skipFrames = 0;
 
     if (argc >= 2) { barWidth = atoi(argv[1]); }
     if (argc >= 3) { skipFrames = atoi(argv[2]); }
@@ -115,18 +154,21 @@ int main(int argc, char **argv) {
         int barHeight = arr[i];
         bars[i].x = i * barWidth;
         bars[i].y = HEIGHT - barHeight;
-        bars[i].w = barWidth - 1;
+        bars[i].w = barWidth - 0.2f;
         bars[i].h = barHeight;
     }
 
     switch (choice) {
         case 1:
-            visualBubbleSort(arr, prenderer, n, bars, &running, skipFrames);
+            visualBubbleSort(prenderer, bars, n, &running, skipFrames);
             break;
         case 2:
-            visualInsertionSort(arr, prenderer, n, bars, &running, skipFrames);
+            visualInsertionSort(prenderer, n, bars, &running, skipFrames);
             break;
         case 3:
+            visualQuickSort(prenderer, n, bars, &running, skipFrames, 0, n);
+            delay(1500, &running);
+            makeItGreen(bars, n, prenderer);
             break;
     }
 
