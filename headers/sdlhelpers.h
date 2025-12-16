@@ -1,0 +1,15 @@
+#ifndef SDLHELPERS_H
+#define SDLHELPERS_H
+
+#include "SDL3/SDL_rect.h"
+#include "SDL3/SDL_render.h"
+
+void regenerateBarsFromArray(int* arr, int n, SDL_FRect* bars);
+void renderFRect(SDL_Renderer *renderer, SDL_FRect rect, SDL_Color color);
+void drawAllBars(SDL_Renderer* prenderer, int n, SDL_FRect* bars, SDL_Color color);
+void delay(Uint32 milliseconds, bool* running);
+void drawBarsColourIndex(SDL_FRect *bars, int n, SDL_Color color, SDL_Renderer *prenderer, int colourIndex);
+void makeItGreen(SDL_FRect* bars, int n, SDL_Renderer *prenderer);
+void printArray(int *arr, size_t n);
+
+#endif
