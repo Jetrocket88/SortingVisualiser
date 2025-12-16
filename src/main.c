@@ -5,23 +5,14 @@
 #include <time.h>
 
 #include "../headers/sdlhelpers.h"
-#include "../headers/algorithms.h"
+#include "../headers/constants.h"
 
 #include <SDL3/SDL.h>
 #include "SDL3/SDL_init.h"
-#include "SDL3/SDL_pixels.h"
 #include "SDL3/SDL_rect.h"
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_timer.h"
 #include "SDL3/SDL_video.h"
-
-#define WIDTH 800
-#define HEIGHT 700
-
-#define WHITE (SDL_Color) {255, 255, 255, 255}
-#define RED (SDL_Color) {255, 0, 0, 255}
-#define GREEN (SDL_Color) {0, 255, 0, 255}
-
 
 void visualBubbleSort(int* arr, SDL_Renderer* prenderer, int n, SDL_FRect* bars, bool* running, size_t skipFrames) {
     size_t frameCount = 0;
@@ -64,14 +55,14 @@ void visualInsertionSort(int* arr, SDL_Renderer* prenderer, uint32_t n, SDL_FRec
     
     for(size_t i = 1; i < n; i++) {
 
-        SDL_FRect value = bars[i];
-        uint32_t position = i;
+        int value = arr[i];
+        size_t position = i;
 
-        while(position > 0 && bars[position - 1].h > value.h) {
-            bars[position] = bars[position - 1];
+        while(position > 0 && arr[position - 1] > value) {
+            arr[position] = arr[position - 1];
             position--;
         }
-        bars[position] = value;
+        arr[position] = value;
 
         frameCount++;
         if (frameCount >= skipFrames) {
@@ -79,10 +70,8 @@ void visualInsertionSort(int* arr, SDL_Renderer* prenderer, uint32_t n, SDL_FRec
             regenerateBarsFromArray(arr, n, bars);
             drawAllBars(prenderer, n, bars, WHITE);
         } 
+        SDL_Delay(20);
     }
-    drawAllBars(prenderer, n, bars, WHITE);
-    delay(1500, running);  //just to see the unsorted array before sorting starts
-    //
     SDL_Delay(20);
     regenerateBarsFromArray(arr, n, bars);
     drawAllBars(prenderer, n, bars, WHITE);
@@ -130,7 +119,6 @@ int main(int argc, char **argv) {
         bars[i].h = barHeight;
     }
 
-    //call sorting algorithm
     switch (choice) {
         case 1:
             visualBubbleSort(arr, prenderer, n, bars, &running, skipFrames);
@@ -142,7 +130,6 @@ int main(int argc, char **argv) {
             break;
     }
 
-    printArray(arr, n);
     delay(3000, &running);
    
     SDL_DestroyRenderer(prenderer);

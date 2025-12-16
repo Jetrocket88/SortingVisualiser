@@ -1,19 +1,13 @@
 #include <stdint.h>
 
+#include "../headers/constants.h"
+
 #include <SDL3/SDL.h>
 #include <stdio.h>
 #include "SDL3/SDL_pixels.h"
 #include "SDL3/SDL_rect.h"
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_timer.h"
-
-#define WIDTH 800
-#define HEIGHT 700
-
-#define WHITE (SDL_Color) {255, 255, 255, 255}
-#define RED (SDL_Color) {255, 0, 0, 255}
-#define GREEN (SDL_Color) {0, 255, 0, 255}
-
 
 void regenerateBarsFromArray(int* arr, int n, SDL_FRect* bars) {
     for (int i = 0; i < n; i++) {
