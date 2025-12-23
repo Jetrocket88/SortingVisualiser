@@ -11,5 +11,7 @@ void drawBarsColourIndex(SDL_FRect *bars, int n, SDL_Color color, SDL_Renderer *
 void makeItGreen(SDL_FRect* bars, int n, SDL_Renderer *prenderer);
 void printArray(int *arr, size_t n);
 void swapBars(SDL_FRect *bar1, SDL_FRect *bar2);
+void drawBarsColourTwoIndex(SDL_FRect *bars, int n, SDL_Color color1, SDL_Color color2, SDL_Renderer *prenderer, int c1, int c2);
+void drawBarsTwoColours(SDL_FRect *bars, int n, SDL_Color color1, SDL_Renderer *prenderer, int c1, int c2);
 
 #endif

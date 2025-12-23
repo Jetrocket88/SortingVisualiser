@@ -54,6 +54,38 @@ void drawBarsColourIndex(SDL_FRect *bars, int n, SDL_Color color, SDL_Renderer *
     SDL_RenderPresent(prenderer);
 }
 
+void drawBarsColourTwoIndex(SDL_FRect *bars, int n, SDL_Color color1, SDL_Color color2, SDL_Renderer *prenderer, int colourIndex1, int colourIndex2) {
+    SDL_SetRenderDrawColor(prenderer, 0, 0, 0, 255); //set the draw colour to black
+    SDL_RenderClear(prenderer); //clear screen to black
+    
+    for (int i = 0; i < n; i++) {
+        if (i == colourIndex1) { 
+            renderFRect(prenderer, bars[i], color1);
+        } else if (i == colourIndex2) {
+            renderFRect(prenderer, bars[i], color2);
+        } else {
+            renderFRect(prenderer, bars[i], WHITE);
+        }
+    }
+    SDL_RenderPresent(prenderer);
+}
+
+void drawBarsTwoColours(SDL_FRect *bars, int n, SDL_Color color1, SDL_Renderer *prenderer, int c1, int c2) {
+    SDL_SetRenderDrawColor(prenderer, 0, 0, 0, 255); //set the draw colour to black
+    SDL_RenderClear(prenderer); //clear screen to black
+    //
+    for (int i = 0; i < n; i++) {
+        if (i == c1) {
+            renderFRect(prenderer, bars[i], color1);
+        } else if (i == c2) {
+            renderFRect(prenderer, bars[i], color1);
+        } else {
+            renderFRect(prenderer, bars[i], WHITE);
+        }
+    }
+    SDL_RenderPresent(prenderer);
+}
+
 void makeItGreen(SDL_FRect* bars, int n, SDL_Renderer *prenderer) {
     int i = 0;
     while(true) {

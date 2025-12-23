@@ -6,7 +6,6 @@
 
 #include "../headers/sdlhelpers.h"
 #include "../headers/constants.h"
-#include "../headers/algorithms.h"
 
 #include <SDL3/SDL.h>
 #include "SDL3/SDL_init.h"
@@ -35,7 +34,7 @@ void visualBubbleSort(SDL_Renderer* prenderer, SDL_FRect *bars, size_t n, bool *
             frameCount++;
             if (frameCount >= skipFrames) {
                 frameCount = 0;
-                drawAllBars(prenderer, n, bars, WHITE);
+                drawBarsTwoColours(bars, n, RED, prenderer, inner, inner + 1);
             } 
         }
         outer--;
@@ -68,9 +67,9 @@ void visualInsertionSort(SDL_Renderer* prenderer, size_t n, SDL_FRect* bars, boo
         frameCount++;
         if (frameCount >= skipFrames) {
             frameCount = 0;
-            drawAllBars(prenderer, n, bars, WHITE);
+            drawBarsTwoColours(bars, n, RED, prenderer, position, position - 1);
         } 
-        SDL_Delay(3);
+        SDL_Delay(6);
     }
 
     SDL_Delay(20);
@@ -83,14 +82,14 @@ int visualPartition(SDL_Renderer* prenderer, size_t n, SDL_FRect* bars, size_t s
 
     SDL_FRect pivot = bars[high];
     int i = low - 1;
-    for (int j = low; j <= high; j++) {
+    for (int j = low; j < high; j++) {
         if (bars[j].h < pivot.h) {
             i++;
             swapBars(&bars[j], &bars[i]);
 
             if (frameCount >= skipFrames) {
                 frameCount = 0;
-                drawAllBars(prenderer, n, bars, WHITE);
+                drawBarsTwoColours(bars, n, RED, prenderer, i, j);
             }
             frameCount++;
         }
@@ -114,7 +113,6 @@ void visualQuickSort(SDL_Renderer* prenderer, size_t n, SDL_FRect* bars, bool *r
     } 
     drawAllBars(prenderer, n, bars, WHITE);
 }
-
 
 int main(int argc, char **argv) {
 
@@ -140,13 +138,18 @@ int main(int argc, char **argv) {
     if (!prenderer) { printf("Could not create renderer: %s\n", SDL_GetError()); return 1; }
 
 
-    //create array and bars
     int n = WIDTH / barWidth;
     int* arr = malloc(n * sizeof(int));
     for (int i = 0; i < n; i++) {
-        arr[i] = rand() % HEIGHT;
+        arr[i] = (i + 1) * (HEIGHT / n);
     }
-
+    for (int i = 0; i < n; i++) {
+        int j = rand() % n;
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+    
     bool running = true;
     SDL_FRect *bars = malloc(n * sizeof(SDL_FRect));
 
